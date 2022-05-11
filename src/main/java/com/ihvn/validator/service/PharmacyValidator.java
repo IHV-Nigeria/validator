@@ -5,6 +5,7 @@
  */
 package com.ihvn.validator.service;
 
+import com.ihvn.validator.models.DemographicsType;
 import com.ihvn.validator.models.EncounterType;
 import com.ihvn.validator.models.ObsType;
 import java.util.List;
@@ -15,6 +16,6 @@ import java.util.List;
  */
 public interface PharmacyValidator {
     
-    void validate(List<EncounterType> encounters, List<ObsType> pharmObs);
+    void validate(List<EncounterType> encounters, List<ObsType> pharmObs, DemographicsType type);
     
 }

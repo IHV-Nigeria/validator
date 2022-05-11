@@ -85,7 +85,7 @@ public class LaboratoryValidatorImpl implements LaboratoryValidator {
                     }
                     break;
                 case LabConceptsUtils.ViralLoadReportedDate:
-                     if (b.getValueDatetime() == null) {
+                    if (b.getValueDatetime() == null) {
                         sb.add("viralload reported date is null");
                     } else if (DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).after(new Date())) {
                         sb.add("viralload reported date is in the future");
