@@ -16,4 +16,10 @@ public class LabConceptsUtils {
     public static final int ViralLoadSampleCollectionDate = 159951;
     public static final int ViralLoadReportedDate = 163281;
     public static final int ResultDate = 166423;
+    public static final int AssayDate = 166424;
+    public static final int ApprovalDate = 166425;
+    public static final int ViralLoadIndication = 164980;
+  //  public static final int LastSampleTakenDate = 159951;
+    
+
 }
