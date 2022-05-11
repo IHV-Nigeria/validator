@@ -14,10 +14,6 @@ import com.ihvn.validator.utils.ConstantsUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -76,14 +72,14 @@ public class FileValidatorImpl implements FileValidator{
     
     
     
-    	private static void validate(String input) {
-		JSONObject jsonSchema = new JSONObject(new JSONTokener(
-		        FileValidatorImpl.class.getResourceAsStream("/sample-schema-modified.json")));
-		JSONObject jsonSubject = new JSONObject(input);
-		
-		Schema schema = SchemaLoader.load(jsonSchema);
-		schema.validate(jsonSubject);
-		
-	}
+//    	private static void validate(String input) {
+//		JSONObject jsonSchema = new JSONObject(new JSONTokener(
+//		        FileValidatorImpl.class.getResourceAsStream("/sample-schema-modified.json")));
+//		JSONObject jsonSubject = new JSONObject(input);
+//		
+//		Schema schema = SchemaLoader.load(jsonSchema);
+//		schema.validate(jsonSubject);
+//		
+//	}
     
 }

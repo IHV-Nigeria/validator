@@ -115,7 +115,7 @@ public class LaboratoryValidatorImpl implements LaboratoryValidator {
                     }
                     break;
                  case LabConceptsUtils.ViralLoadIndication:
-                    if (b.getValueCoded() != 0.0 && StringUtils.isNotBlank(b.getVariableValue())) {
+                    if (b.getValueCoded() == 0.0 || StringUtils.isBlank(b.getVariableValue())) {
                         sb.add("viralload indication is missing");
                     } 
                     break;
