@@ -5,11 +5,7 @@
  */
 package com.ihvn.validator.serviceImpl;
 
-import com.ihvn.validator.models.EncounterErrors;
-import com.ihvn.validator.models.EncounterType;
-import com.ihvn.validator.models.ObsError;
-import com.ihvn.validator.models.ObsType;
-import com.ihvn.validator.models.ValidationSummary;
+import com.ihvn.validator.models.*;
 import com.ihvn.validator.service.LaboratoryValidator;
 import com.ihvn.validator.utils.LabConceptsUtils;
 import java.text.SimpleDateFormat;
@@ -32,13 +28,14 @@ import org.apache.commons.lang3.time.DateUtils;
 public class LaboratoryValidatorImpl implements LaboratoryValidator {
 
     @Override
-    public List<EncounterErrors> validate(List<EncounterType> encounters, List<ObsType> labObs) {
+    public List<EncounterErrors> validate(List<EncounterType> encounters,
+                                          List<ObsType> labObs, DemographicsType demographicsType) {
         
         List<EncounterErrors> allEncounterErrors = new ArrayList<>();
         
         encounters.stream().forEach(a -> {
             List<ObsError> errors = validateLabForm(a, labObs.stream().filter(b -> b.getEncounterId()==a.getEncounterId())
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toList()), demographicsType);
             EncounterErrors ee = new EncounterErrors();
             ee.setEncounterId(a.getEncounterId());
             ee.setFormId(a.getFormId());
@@ -53,7 +50,7 @@ public class LaboratoryValidatorImpl implements LaboratoryValidator {
 
     }
 
-    private  List<ObsError> validateLabForm(EncounterType e, List<ObsType> obsList) {
+    private  List<ObsError> validateLabForm(EncounterType e, List<ObsType> obsList, DemographicsType demographicsType) {
 
         List<ObsError> allObsErrors = new ArrayList<>();
         StringJoiner sb = new StringJoiner(",");

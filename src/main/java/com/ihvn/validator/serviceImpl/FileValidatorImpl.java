@@ -69,7 +69,7 @@ public class FileValidatorImpl implements FileValidator{
       
       laboratoryValidator.validate(labEncounters, container.getMessageData().getObs().stream()
               .filter(a -> a.getEncounterType()==ConstantsUtils.PharmacyEncounterType)
-              .collect(Collectors.toList()));
+              .collect(Collectors.toList()), demographicsType);
       
       artCommencementValidator.validate(artCommenceEncounter, container.getMessageData().getObs().stream()
               .filter(encounter -> encounter.getEncounterType() == ConstantsUtils.ART_COMMENCEMENT_TYPE)
