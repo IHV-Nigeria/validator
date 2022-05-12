@@ -19,6 +19,8 @@ public class ConstantsUtils {
     public static final int CareCardEncounterType = 12;
     public static final int LabEncounterType = 11;
 
+    public static final  int ART_COMMENCEMENT_TYPE = 25;
+
     public static Optional<ObsType> getObsbyConceptID(int conceptId, List<ObsType> obsList) {
 
         return obsList.stream().filter(a -> a.getConceptId() == conceptId).findAny();

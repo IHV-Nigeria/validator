@@ -6,7 +6,9 @@
 package com.ihvn.validator.serviceImpl;
 
 import com.ihvn.validator.models.Container;
+import com.ihvn.validator.models.DemographicsType;
 import com.ihvn.validator.models.EncounterType;
+import com.ihvn.validator.service.ARTCommencementValidator;
 import com.ihvn.validator.service.FileValidator;
 import com.ihvn.validator.service.LaboratoryValidator;
 import com.ihvn.validator.service.PharmacyValidator;
@@ -29,13 +31,18 @@ public class FileValidatorImpl implements FileValidator{
     @Autowired
     LaboratoryValidator laboratoryValidator;
 
+    @Autowired
+    ARTCommencementValidator artCommencementValidator;
+
     @Override
     public void validationFile(Container container) {
         
         List<EncounterType> allEncounters = container.getMessageData().getEncounters();
+        DemographicsType demographicsType = container.getMessageData().getDemographics();
         List<EncounterType> pharmEncounters = new ArrayList<>();
-         List<EncounterType> careEncounters = new ArrayList<>();
-           List<EncounterType> labEncounters = new ArrayList<>();
+        List<EncounterType> careEncounters = new ArrayList<>();
+        List<EncounterType> labEncounters = new ArrayList<>();
+        List<EncounterType> artCommenceEncounter = new ArrayList<>() ;
         
            allEncounters.forEach(encounter -> {
             switch (encounter.getEncounterTypeId()) {
@@ -48,6 +55,8 @@ public class FileValidatorImpl implements FileValidator{
                 case ConstantsUtils.LabEncounterType:
                     labEncounters.add(encounter);
                     break;
+                case ConstantsUtils.ART_COMMENCEMENT_TYPE:
+                    artCommenceEncounter.add(encounter);
                 default:
                     break;
             }
@@ -56,13 +65,16 @@ public class FileValidatorImpl implements FileValidator{
         
       pharmacyValidator.validate(pharmEncounters, container.getMessageData().getObs().stream()
               .filter(a -> a.getEncounterType()==ConstantsUtils.PharmacyEncounterType)
-              .collect(Collectors.toList()));
+              .collect(Collectors.toList()), demographicsType);
       
       laboratoryValidator.validate(labEncounters, container.getMessageData().getObs().stream()
               .filter(a -> a.getEncounterType()==ConstantsUtils.PharmacyEncounterType)
               .collect(Collectors.toList()));
       
-      
+      artCommencementValidator.validate(artCommenceEncounter, container.getMessageData().getObs().stream()
+              .filter(encounter -> encounter.getEncounterType() == ConstantsUtils.ART_COMMENCEMENT_TYPE)
+              .collect(Collectors.toList()), demographicsType
+      );
        
         
     }

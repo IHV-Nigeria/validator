@@ -157,6 +157,8 @@ public class PharmacyValidatorImpl implements PharmacyValidator{
                                 sb.add("Date Ordered is before 1999-01-01");
                             }
                             break;
+                        default:
+                            break;
                     }
 
                     eachError.setError(sb.toString());
