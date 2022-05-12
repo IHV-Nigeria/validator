@@ -5,8 +5,10 @@
  */
 package com.ihvn.validator.serviceImpl;
 
+import com.ihvn.validator.models.DataError;
 import com.ihvn.validator.models.EncounterErrors;
 import com.ihvn.validator.models.EncounterType;
+import com.ihvn.validator.models.ErrorLevel;
 import com.ihvn.validator.models.ObsError;
 import com.ihvn.validator.models.ObsType;
 import java.util.List;
@@ -62,6 +64,9 @@ public class HIVEnrollmentValidatorImpl implements HIVEnrollmentValidator{
         LocalDate stDate = LocalDate.of(1999, Month.JANUARY, 01);
         Date date_1999 = Date.from(stDate.atStartOfDay(defaultZoneId).toInstant());
         
+        
+           List<DataError> errors = new ArrayList<>();
+        
         obsList.stream()
                 .forEach(b -> {
                     ObsError eachError = new ObsError();
@@ -70,31 +75,36 @@ public class HIVEnrollmentValidatorImpl implements HIVEnrollmentValidator{
             switch (b.getConceptId()) {
                 case HivEnrollmentConceptsUtils.CareEntryPoint:
                     if (b.getValueCoded() == 0.0 || StringUtils.isNotBlank(b.getVariableValue())) {
-                        sb.add("care entry point is blank");
+                        // sb.add("care entry point is blank");
+                        errors.add(new DataError("care entry point is blank", ErrorLevel.CRITICAL));
                     }
                     break;
                 case HivEnrollmentConceptsUtils.KPType:
                     if (ConstantsUtils.getObsbyConceptID(166284, obsList).isPresent() && StringUtils.isBlank(b.getVariableValue())) {
-                        sb.add("kptype is blank");
+                       // sb.add("kptype is blank");
+                         errors.add(new DataError("kptype is blank", ErrorLevel.CRITICAL));
                     }
                     break;
                 case HivEnrollmentConceptsUtils.DateTransferredIn:
                     Optional<ObsType> tempObs = ConstantsUtils.getObsbyConceptID(160540, obsList);
                     if (tempObs.isPresent() && tempObs.get().getValueCoded()==160593 && b.getValueDatetime()==null) {
-                        sb.add("DateTransferredIn is blank");
+                    //   sb.add("DateTransferredIn is blank");
+                          errors.add(new DataError("DateTransferredIn is blank", ErrorLevel.CRITICAL));
                     } else if (b.getValueDatetime() != null && DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).after(new Date())) {
-                        sb.add("DateTransferredIn is in the future");
+                      //  sb.add("DateTransferredIn is in the future");
+                         errors.add(new DataError("DateTransferredIn is in the future", ErrorLevel.CRITICAL));
                     }
                     break;
                 case HivEnrollmentConceptsUtils.DateConfirmedHIVPos:
                      if (b.getValueDatetime() == null) {
                         sb.add("DateConfirmedHIVPos is null");
+                       errors.add(new DataError("DateConfirmedHIVPos is null", ErrorLevel.CRITICAL));
                     } 
                     break;
                 default:
                     break;
             }
-            eachError.setError(sb.toString());
+            eachError.setError(errors);
 
             
             allObsErrors.add(eachError);

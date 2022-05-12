@@ -5,49 +5,31 @@
  */
 package com.ihvn.validator.models;
 
+import java.util.List;
+
 /**
  *
  * @author MORRISON.I
  */
 public class ValidationSummary {
 
-    
-    
-    private String conceptId;
-    private String errors;
-    private String encounterType;
-    private String encounterId;
+    private String patientuuid;
+    private List<EncounterErrors> errors;
 
-    public String getConceptId() {
-        return conceptId;
+    public String getPatientuuid() {
+        return patientuuid;
     }
 
-    public void setConceptId(String conceptId) {
-        this.conceptId = conceptId;
+    public void setPatientuuid(String patientuuid) {
+        this.patientuuid = patientuuid;
     }
 
-    public String getErrors() {
+    public List<EncounterErrors> getErrors() {
         return errors;
     }
 
-    public void setErrors(String errors) {
+    public void setErrors(List<EncounterErrors> errors) {
         this.errors = errors;
-    }
-
-    public String getEncounterType() {
-        return encounterType;
-    }
-
-    public void setEncounterType(String encounterType) {
-        this.encounterType = encounterType;
-    }
-
-    public String getEncounterId() {
-        return encounterId;
-    }
-
-    public void setEncounterId(String encounterId) {
-        this.encounterId = encounterId;
     }
 
 }

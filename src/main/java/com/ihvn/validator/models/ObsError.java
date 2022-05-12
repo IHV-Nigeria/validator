@@ -5,20 +5,22 @@
  */
 package com.ihvn.validator.models;
 
+import java.util.List;
+
 /**
  *
  * @author MORRISON.I
  */
 public class ObsError {
-    
-    private String error;
+
+    private List<DataError> error;
     private int obsId;
 
-    public String getError() {
+    public List<DataError> getError() {
         return error;
     }
 
-    public void setError(String error) {
+    public void setError(List<DataError> error) {
         this.error = error;
     }
 
@@ -30,9 +32,5 @@ public class ObsError {
         this.obsId = obsId;
     }
 
-   
-    
-    
-    
-    
+
 }

@@ -42,6 +42,9 @@ public class ARTCommencementValidatorImpl implements ARTCommencementValidator {
         ZoneId defaultZoneId = ZoneId.systemDefault();
         LocalDate stDate = LocalDate.of(1999, Month.JANUARY, 01);
         Date date_1999 = Date.from(stDate.atStartOfDay(defaultZoneId).toInstant());
+        
+        List<DataError> errors = new ArrayList<>();
+       
 
         obsList.stream()
                 .forEach(currentObs -> {
@@ -51,46 +54,52 @@ public class ARTCommencementValidatorImpl implements ARTCommencementValidator {
                     switch (currentObs.getConceptId()) {
                         case ARTCommencementConceptsUtils.ART_START_DATE:
                             if (currentObs.getValueDatetime() == null) {
-                                sb.add("ART start date is null");
+                             //   sb.add("ART start date is null");
+                                errors.add(new DataError("ART start date is null", ErrorLevel.CRITICAL));
+                                
                             } else if (DateUtils.truncate(currentObs.getValueDatetime(), Calendar.DATE).after(new Date())) {
-                                sb.add("ART start date is in the future");
+                               // sb.add("ART start date is in the future");
+                              errors.add(new DataError("ART start date is in the future", ErrorLevel.CRITICAL));
+                                
                             } else if(DateUtils.truncate(currentObs.getValueDatetime(), Calendar.DATE).before(date_1999)){
-                                sb.add("ART start date is before 1999-01-01");
+                             //   sb.add("ART start date is before 1999-01-01");
+                                errors.add(new DataError("ART start date is before 1999-01-01", ErrorLevel.CRITICAL));
                             }
                             break;
                         case ARTCommencementConceptsUtils.CLINICAL_STAGE:
-                            if (currentObs.getValueCoded() == 0.0 ||
-                                    StringUtils.isBlank(currentObs.getVariableValue())
+                            if (StringUtils.isBlank(currentObs.getVariableValue())
                             ){
-                                sb.add("Clinical stage is null");
+                              //  sb.add("Clinical stage is null");
+                                 errors.add(new DataError("Clinical stage is null", ErrorLevel.CRITICAL));
                             }
                             break;
                         case ARTCommencementConceptsUtils.FUNCTIONAL_STATUS:
-                            if (currentObs.getValueCoded() == 0.0 ||
-                                    StringUtils.isBlank(currentObs.getVariableValue())
+                            if (StringUtils.isBlank(currentObs.getVariableValue())
                             ){
-                                sb.add("Functional status is null");
+                              //  sb.add("Functional status is null");
+                                errors.add(new DataError("Functional status is null", ErrorLevel.CRITICAL));
+                                
                             }
                             break;
                         case ARTCommencementConceptsUtils.PREGNANCY_STATUS:
                             if(Objects.equals(GenderUtils.FEMALE.getType(), demographicsType.getGender()) &&
-                                    (currentObs.getValueCoded() == 0.0 ||
-                                            StringUtils.isBlank(currentObs.getVariableValue()))
+                                    (StringUtils.isBlank(currentObs.getVariableValue()))
                             ) {
-                                sb.add("Pregnancy Status is null");
+                               // sb.add("Pregnancy Status is null");
+                                 errors.add(new DataError("Pregnancy Status is null", ErrorLevel.CRITICAL));
                             }
                             break;
                         case ARTCommencementConceptsUtils.INITIAL_REGIMEN_LINE:
-                            if (currentObs.getValueCoded() == 0.0 ||
-                                    StringUtils.isBlank(currentObs.getVariableValue())
+                            if (StringUtils.isBlank(currentObs.getVariableValue())
                             ){
-                                sb.add("Initial regimen line is null, must select one of adult or paediatric");
+                              //  sb.add("Initial regimen line is null, must select one of adult or paediatric");
+                                  errors.add(new DataError("Initial regimen line is null, must select one of adult or paediatric", ErrorLevel.CRITICAL));
                             }
                             break;
                         default:
                             break;
                     }
-                    eachError.setError(sb.toString());
+                  eachError.setError(errors);
                     allObsErrors.add(eachError);
                 });
 
