@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class ARTCommencementValidatorImpl implements ARTCommencementValidator {
 
     @Override
-    public void validate(List<EncounterType> encounters, List<ObsType> artCommenceObs, DemographicsType demographicsType) {
+    public List<EncounterErrors> validate(List<EncounterType> encounters, List<ObsType> artCommenceObs, DemographicsType demographicsType) {
         List<EncounterErrors> allEncounterErrors = new ArrayList<>();
         encounters.stream().forEach(a -> {
             List<ObsError> errors = validateARTCommencementForm(a, artCommenceObs.stream().filter(b -> b.getEncounterId()==a.getEncounterId())
@@ -31,6 +31,8 @@ public class ARTCommencementValidatorImpl implements ARTCommencementValidator {
 
             allEncounterErrors.add(ee);
         });
+
+        return  allEncounterErrors;
     }
 
     private  List<ObsError> validateARTCommencementForm(EncounterType e, List<ObsType> obsList,
@@ -63,21 +65,21 @@ public class ARTCommencementValidatorImpl implements ARTCommencementValidator {
                                 
                             } else if(DateUtils.truncate(currentObs.getValueDatetime(), Calendar.DATE).before(date_1999)){
                              //   sb.add("ART start date is before 1999-01-01");
-                                errors.add(new DataError("ART start date is before 1999-01-01", ErrorLevel.CRITICAL));
+                                errors.add(new DataError("ART start date is before 1999-01-01", ErrorLevel.NON_CRITICAL));
                             }
                             break;
                         case ARTCommencementConceptsUtils.CLINICAL_STAGE:
                             if (StringUtils.isBlank(currentObs.getVariableValue())
                             ){
                               //  sb.add("Clinical stage is null");
-                                 errors.add(new DataError("Clinical stage is null", ErrorLevel.CRITICAL));
+                                 errors.add(new DataError("Clinical stage is null", ErrorLevel.NON_CRITICAL));
                             }
                             break;
                         case ARTCommencementConceptsUtils.FUNCTIONAL_STATUS:
                             if (StringUtils.isBlank(currentObs.getVariableValue())
                             ){
                               //  sb.add("Functional status is null");
-                                errors.add(new DataError("Functional status is null", ErrorLevel.CRITICAL));
+                                errors.add(new DataError("Functional status is null", ErrorLevel.NON_CRITICAL));
                                 
                             }
                             break;
@@ -86,7 +88,7 @@ public class ARTCommencementValidatorImpl implements ARTCommencementValidator {
                                     (StringUtils.isBlank(currentObs.getVariableValue()))
                             ) {
                                // sb.add("Pregnancy Status is null");
-                                 errors.add(new DataError("Pregnancy Status is null", ErrorLevel.CRITICAL));
+                                 errors.add(new DataError("Pregnancy Status is null", ErrorLevel.NON_CRITICAL));
                             }
                             break;
                         case ARTCommencementConceptsUtils.INITIAL_REGIMEN_LINE:

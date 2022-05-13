@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.UUID;
 
 
 /**
@@ -688,13 +689,11 @@ public class DemographicsType {
 
     /**
      * Gets the value of the patientUuid property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
-    public String getPatientUuid() {
+    public UUID getPatientUuid() {
         return patientUuid;
     }
 

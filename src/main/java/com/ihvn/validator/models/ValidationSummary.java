@@ -5,31 +5,23 @@
  */
 package com.ihvn.validator.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
  * @author MORRISON.I
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ValidationSummary {
 
-    private String patientuuid;
+    private UUID patientUuid;
     private List<EncounterErrors> errors;
-
-    public String getPatientuuid() {
-        return patientuuid;
-    }
-
-    public void setPatientuuid(String patientuuid) {
-        this.patientuuid = patientuuid;
-    }
-
-    public List<EncounterErrors> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(List<EncounterErrors> errors) {
-        this.errors = errors;
-    }
 
 }

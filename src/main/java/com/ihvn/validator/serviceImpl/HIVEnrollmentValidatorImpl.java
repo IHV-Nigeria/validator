@@ -65,7 +65,7 @@ public class HIVEnrollmentValidatorImpl implements HIVEnrollmentValidator{
         Date date_1999 = Date.from(stDate.atStartOfDay(defaultZoneId).toInstant());
         
         
-           List<DataError> errors = new ArrayList<>();
+        List<DataError> errors = new ArrayList<>();
         
         obsList.stream()
                 .forEach(b -> {
@@ -82,24 +82,27 @@ public class HIVEnrollmentValidatorImpl implements HIVEnrollmentValidator{
                 case HivEnrollmentConceptsUtils.KPType:
                     if (ConstantsUtils.getObsbyConceptID(166284, obsList).isPresent() && StringUtils.isBlank(b.getVariableValue())) {
                        // sb.add("kptype is blank");
-                         errors.add(new DataError("kptype is blank", ErrorLevel.CRITICAL));
+                         errors.add(new DataError("kptype is blank", ErrorLevel.NON_CRITICAL));
                     }
                     break;
                 case HivEnrollmentConceptsUtils.DateTransferredIn:
                     Optional<ObsType> tempObs = ConstantsUtils.getObsbyConceptID(160540, obsList);
                     if (tempObs.isPresent() && tempObs.get().getValueCoded()==160593 && b.getValueDatetime()==null) {
                     //   sb.add("DateTransferredIn is blank");
-                          errors.add(new DataError("DateTransferredIn is blank", ErrorLevel.CRITICAL));
+                          errors.add(new DataError("DateTransferredIn is blank", ErrorLevel.NON_CRITICAL));
                     } else if (b.getValueDatetime() != null && DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).after(new Date())) {
                       //  sb.add("DateTransferredIn is in the future");
-                         errors.add(new DataError("DateTransferredIn is in the future", ErrorLevel.CRITICAL));
+                         errors.add(new DataError("DateTransferredIn is in the future", ErrorLevel.NON_CRITICAL));
                     }
                     break;
                 case HivEnrollmentConceptsUtils.DateConfirmedHIVPos:
-                     if (b.getValueDatetime() == null) {
-                        sb.add("DateConfirmedHIVPos is null");
+                    if (b.getValueDatetime() == null) {
+                       sb.add("DateConfirmedHIVPos is null");
                        errors.add(new DataError("DateConfirmedHIVPos is null", ErrorLevel.CRITICAL));
-                    } 
+                    } else if (b.getValueDatetime() != null && DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).after(new Date())) {
+                        //  sb.add("DateTransferredIn is in the future");
+                        errors.add(new DataError("DateConfirmedHIVPos is in the future", ErrorLevel.CRITICAL));
+                    }
                     break;
                 default:
                     break;
