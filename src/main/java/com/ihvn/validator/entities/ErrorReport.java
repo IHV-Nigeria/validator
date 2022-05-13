@@ -26,7 +26,7 @@ public class ErrorReport {
     @Column(name = "patient_id")
     private UUID patientId;
 
-    @Type(type= "jsonb-node")
+    @Type(type= "jsonb")
     @Column(name = "error_message", columnDefinition = "jsonb")
     private List<EncounterErrors> errorMessage;
 
