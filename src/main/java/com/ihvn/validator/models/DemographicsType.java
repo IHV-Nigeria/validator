@@ -705,7 +705,7 @@ public class DemographicsType {
      *     {@link String }
      *     
      */
-    public void setPatientUuid(String value) {
+    public void setPatientUuid(UUID value) {
         this.patientUuid = value;
     }
 
