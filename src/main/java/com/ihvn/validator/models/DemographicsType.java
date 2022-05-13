@@ -147,7 +147,7 @@ public class DemographicsType {
     @XmlElement(name = "deathdate_estimated")
     protected int deathdateEstimated;
     @XmlElement(name = "patient_uuid", required = true)
-    protected String patientUuid;
+    protected UUID patientUuid;
     @XmlElement(name = "datim_id", required = true)
     protected String datimId;
 
