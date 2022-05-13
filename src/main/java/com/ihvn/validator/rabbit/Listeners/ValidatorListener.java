@@ -12,7 +12,6 @@ import java.util.List;
 @Component
 @Slf4j
 public class ValidatorListener {
-
     private final FileValidatorImpl fileValidator;
 
     public ValidatorListener(FileValidatorImpl fileValidator) {
@@ -22,9 +21,19 @@ public class ValidatorListener {
     // This is a rabbit listener the listens and consume any message that comes to the queue
     @RabbitListener(queues = QueueNames.VALIDATOR_QUEUE)
     public void validatorListenerOne(List<Container> containerList){
-
+        log.info("VALIDATOR 1 {}", containerList.size());
         // using parallel stream for run the validation process in parallel
-        containerList.parallelStream().forEach(container -> {
+        containerList.stream().forEach(container -> {
+            // Call the file validation method to validate this container
+            fileValidator.validationFile(container);
+        });
+    }
+
+    @RabbitListener(queues = QueueNames.VALIDATOR_QUEUE)
+    public void validatorListenerTwo(List<Container> containerList){
+        log.info("VALIDATOR 2 {}", containerList.size());
+        // using parallel stream for run the validation process in parallel
+        containerList.stream().forEach(container -> {
             // Call the file validation method to validate this container
             fileValidator.validationFile(container);
         });

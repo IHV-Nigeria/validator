@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public interface ARTCommencementValidator {
-
-    List<EncounterErrors> validate(List<EncounterType> encounters, List<ObsType> artCommenceObs, DemographicsType type);
+    List<EncounterErrors> validate(List<EncounterType> encounters,
+                                   List<ObsType> artCommenceObs, DemographicsType type);
 
 }

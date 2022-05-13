@@ -20,6 +20,7 @@ import java.util.List;
 @Service
 public interface PharmacyValidator {
     
-    List<EncounterErrors> validate(List<EncounterType> encounters, List<ObsType> pharmObs, DemographicsType type);
+    List<EncounterErrors> validate(List<EncounterType> encounters,
+                                   List<ObsType> pharmObs, DemographicsType type);
     
 }

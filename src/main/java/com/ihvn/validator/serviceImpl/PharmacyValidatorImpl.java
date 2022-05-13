@@ -8,9 +8,11 @@ package com.ihvn.validator.serviceImpl;
 import com.ihvn.validator.models.*;
 import com.ihvn.validator.service.PharmacyValidator;
 import com.ihvn.validator.utils.GenderUtils;
+import com.ihvn.validator.utils.ValidatorDateUtils;
 import com.ihvn.validator.utils.concepts.PharmacyConceptsUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
  *
  * @author MORRISON.I
  */
+@Service
 public class PharmacyValidatorImpl implements PharmacyValidator{
 
     @Override
@@ -39,7 +42,7 @@ public class PharmacyValidatorImpl implements PharmacyValidator{
            ee.setFormId(a.getFormId());
            ee.setErrors(errors);
 
-           allEncounterErrors.add(ee);
+           if (!ee.getErrors().isEmpty()) allEncounterErrors.add(ee);
        });
 
        return allEncounterErrors;
@@ -50,14 +53,17 @@ public class PharmacyValidatorImpl implements PharmacyValidator{
 
         List<ObsError> allObsErrors = new ArrayList<>();
 
-        StringJoiner sb = new StringJoiner(",");
         ZoneId defaultZoneId = ZoneId.systemDefault();
         LocalDate stDate = LocalDate.of(1999, Month.JANUARY, 01);
         Date date_1999 = Date.from(stDate.atStartOfDay(defaultZoneId).toInstant());
         
          List<DataError> errors = new ArrayList<>();
 
+        ValidatorDateUtils validatorDateUtils = new ValidatorDateUtils();
+        LocalDate localDate_1999 = LocalDate.of(1999, Month.JANUARY, 01);
+
         obsList.stream()
+                // .filter(voidedObs -> voidedObs.getVoided() == 0)
                 .forEach( currentObs -> {
                     ObsError eachError = new ObsError();
                     eachError.setObsId(currentObs.getObsId());
@@ -80,25 +86,19 @@ public class PharmacyValidatorImpl implements PharmacyValidator{
                             break;
                         case PharmacyConceptsUtils.PREGNANCY_STATUS:
                             if(Objects.equals(GenderUtils.FEMALE.getType(), demographicsType.getGender()) &&
-                                    (currentObs.getValueCoded() == 0.0 ||
-                                            StringUtils.isBlank(currentObs.getVariableValue()))
-                            ) {
+                                    (StringUtils.isBlank(currentObs.getVariableValue()))) {
                                // sb.add("Pregnancy Status is null");
                                  errors.add(new DataError("Pregnancy Status is null", ErrorLevel.NON_CRITICAL));
                             }
                             break;
                         case PharmacyConceptsUtils.PICKUP_REASON:
-                            if (currentObs.getValueCoded() == 0.0 ||
-                                    StringUtils.isBlank(currentObs.getVariableValue())
-                            ){
+                            if (StringUtils.isBlank(currentObs.getVariableValue())){
                                // sb.add("Pickup reason is null");
                                  errors.add(new DataError("Pickup reason is null", ErrorLevel.NON_CRITICAL));
                             }
                             break;
                         case PharmacyConceptsUtils.DISPENSING_MODALITY:
-                            if (currentObs.getValueCoded() == 0.0 ||
-                                    StringUtils.isBlank(currentObs.getVariableValue())
-                            ){
+                            if (StringUtils.isBlank(currentObs.getVariableValue())){
                                // sb.add("Dispensing modality is null");
                                   errors.add(new DataError("Dispensing modality is null", ErrorLevel.NON_CRITICAL));
                             }
@@ -110,9 +110,7 @@ public class PharmacyValidatorImpl implements PharmacyValidator{
                             // TODO
                             break;
                         case PharmacyConceptsUtils.MMD_TYPE:
-                            if (currentObs.getValueCoded() == 0.0 ||
-                                    StringUtils.isBlank(currentObs.getVariableValue())
-                            ){
+                            if (StringUtils.isBlank(currentObs.getVariableValue())){
                                // sb.add("MMD type is null");
                                  errors.add(new DataError("MMD type is null", ErrorLevel.NON_CRITICAL));
                             }
@@ -156,10 +154,10 @@ public class PharmacyValidatorImpl implements PharmacyValidator{
                             if (currentObs.getValueDatetime() == null) {
                             //    sb.add("Last INH dispensed date is null");
                                  errors.add(new DataError("Last INH dispensed date is null", ErrorLevel.NON_CRITICAL));
-                            } else if (DateUtils.truncate(currentObs.getValueDatetime(), Calendar.DATE).after(new Date())) {
+                            } else if (currentObs.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(currentObs.getValueDatetime()).isAfter(LocalDate.now())) {;
                                // sb.add("Last INH dispensed date is in the future");
                                  errors.add(new DataError("Last INH dispensed date is in the future", ErrorLevel.NON_CRITICAL));
-                            } else if(DateUtils.truncate(currentObs.getValueDatetime(), Calendar.DATE).before(date_1999)){
+                            } else if(currentObs.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(currentObs.getValueDatetime()).isBefore(localDate_1999)){
                                // sb.add("Last INH dispensed date is before 1999-01-01");
                                  errors.add(new DataError("Last INH dispensed date is before 1999-01-01", ErrorLevel.NON_CRITICAL));
                             }
@@ -168,10 +166,10 @@ public class PharmacyValidatorImpl implements PharmacyValidator{
                             if (currentObs.getValueDatetime() == null) {
                                // sb.add("Date Ordered is null");
                                 errors.add(new DataError("Date Ordered is null", ErrorLevel.NON_CRITICAL));
-                            } else if (DateUtils.truncate(currentObs.getValueDatetime(), Calendar.DATE).after(new Date())) {
+                            } else if (currentObs.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(currentObs.getValueDatetime()).isAfter(LocalDate.now())) {
                                // sb.add("Date Ordered is in the future");
                                    errors.add(new DataError("Date Ordered is in the future", ErrorLevel.NON_CRITICAL));
-                            } else if(DateUtils.truncate(currentObs.getValueDatetime(), Calendar.DATE).before(date_1999)){
+                            } else if(currentObs.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(currentObs.getValueDatetime()).isBefore(localDate_1999)){
                                // sb.add("Date Ordered is before 1999-01-01");
                                 errors.add(new DataError("Date Ordered is before 1999-01-01", ErrorLevel.NON_CRITICAL));
                             }
@@ -181,7 +179,7 @@ public class PharmacyValidatorImpl implements PharmacyValidator{
                     }
 
                     eachError.setError(errors);
-                    allObsErrors.add(eachError);
+                    if (!eachError.getError().isEmpty()) allObsErrors.add(eachError);
 
                 }
         );

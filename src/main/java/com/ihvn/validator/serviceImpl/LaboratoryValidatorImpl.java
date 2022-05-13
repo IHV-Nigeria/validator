@@ -14,13 +14,17 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import com.ihvn.validator.utils.ValidatorDateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author MORRISON.I
  */
+@Service
 public class LaboratoryValidatorImpl implements LaboratoryValidator {
 
     @Override
@@ -37,7 +41,7 @@ public class LaboratoryValidatorImpl implements LaboratoryValidator {
             ee.setFormId(a.getFormId());
             ee.setErrors(errors);
 
-            allEncounterErrors.add(ee);
+            if (!ee.getErrors().isEmpty()) allEncounterErrors.add(ee);
 
         });
 
@@ -56,7 +60,11 @@ public class LaboratoryValidatorImpl implements LaboratoryValidator {
 
         List<DataError> errors = new ArrayList<>();
 
+        ValidatorDateUtils validatorDateUtils = new ValidatorDateUtils();
+        LocalDate localDate_1999 = LocalDate.of(1999, Month.JANUARY, 01);
+
         obsList.stream()
+                // .filter(voidedObs -> voidedObs.getVoided() == 0)
                 .forEach(b -> {
                     ObsError eachError = new ObsError();
                     eachError.setObsId(b.getObsId());
@@ -78,7 +86,7 @@ public class LaboratoryValidatorImpl implements LaboratoryValidator {
                             if (b.getValueDatetime() == null) {
                                // sb.add("viralload sample collection date is null");
                                 errors.add(new DataError("viralload sample collection date is null", ErrorLevel.CRITICAL));
-                            } else if (DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).after(new Date())) {
+                            } else if (b.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(b.getValueDatetime()).isAfter(LocalDate.now())) {
                                // sb.add("viralload sample collection date is in the future");
                                  errors.add(new DataError("viralload sample collection date is in the future", ErrorLevel.CRITICAL));
                             }
@@ -87,37 +95,37 @@ public class LaboratoryValidatorImpl implements LaboratoryValidator {
                             if (b.getValueDatetime() == null) {
                               //  sb.add("viralload reported date is null");
                                  errors.add(new DataError("viralload reported date is null", ErrorLevel.NON_CRITICAL));
-                            } else if (DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).after(new Date())) {
+                            } else if (b.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(b.getValueDatetime()).isAfter(LocalDate.now())) {
                               //  sb.add("viralload reported date is in the future");
                                   errors.add(new DataError("viralload reported date is in the future", ErrorLevel.NON_CRITICAL));
-                            } else if (DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).before(date_1999)) {
+                            } else if (b.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(b.getValueDatetime()).isBefore(localDate_1999)) {
                               //  sb.add("viralload reported date is before 1999-01-01");
                                    errors.add(new DataError("viralload reported date is before 1999-01-01", ErrorLevel.NON_CRITICAL));
                             }
                             break;
                         case LabConceptsUtils.ResultDate:
-                            if (b.getValueDatetime() != null && DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).after(new Date())) {
+                            if (b.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(b.getValueDatetime()).isAfter(LocalDate.now())) {
                                // sb.add("result date is in the future");
                                   errors.add(new DataError("result date is in the future", ErrorLevel.NON_CRITICAL));
-                            } else if (b.getValueDatetime() != null && DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).before(date_1999)) {
+                            } else if (b.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(b.getValueDatetime()).isBefore(localDate_1999)) {
                               //  sb.add("result date is before 1999-01-01");
                                errors.add(new DataError("result date is before 1999-01-01", ErrorLevel.NON_CRITICAL));
                             }
                             break;
                         case LabConceptsUtils.AssayDate:
-                            if (b.getValueDatetime() != null && DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).after(new Date())) {
+                            if (b.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(b.getValueDatetime()).isAfter(LocalDate.now())) {
                               //  sb.add("assay date is in the future");
                                errors.add(new DataError("assay date is in the future", ErrorLevel.NON_CRITICAL));
-                            } else if (b.getValueDatetime() != null && DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).before(date_1999)) {
+                            } else if (b.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(b.getValueDatetime()).isBefore(localDate_1999)) {
                                // sb.add("assay date is before 1999-01-01");
                                 errors.add(new DataError("assay date is before 1999-01-01", ErrorLevel.NON_CRITICAL));
                             }
                             break;
                         case LabConceptsUtils.ApprovalDate:
-                            if (b.getValueDatetime() != null && DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).after(new Date())) {
+                            if (b.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(b.getValueDatetime()).isAfter(LocalDate.now())) {
                                // sb.add("approval date is in the future");
                                 errors.add(new DataError("approval date is in the future", ErrorLevel.NON_CRITICAL));
-                            } else if (b.getValueDatetime() != null && DateUtils.truncate(b.getValueDatetime(), Calendar.DATE).before(date_1999)) {
+                            } else if (b.getValueDatetime() != null && validatorDateUtils.convertToLocalDateTime(b.getValueDatetime()).isBefore(localDate_1999)) {
                              //   sb.add("approval date is before 1999-01-01");
                                  errors.add(new DataError("approval date is before 1999-01-01", ErrorLevel.NON_CRITICAL));
                             }
@@ -133,7 +141,7 @@ public class LaboratoryValidatorImpl implements LaboratoryValidator {
                     }
                     eachError.setError(errors);
 
-                    allObsErrors.add(eachError);
+                    if (!eachError.getError().isEmpty()) allObsErrors.add(eachError);
 
                 });
 

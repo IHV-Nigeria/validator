@@ -19,5 +19,6 @@ import java.util.List;
  */
 @Service
 public interface LaboratoryValidator {
-    List<EncounterErrors> validate(List<EncounterType> encounters, List<ObsType> labObs, DemographicsType demographicsType);
+    List<EncounterErrors> validate(List<EncounterType> encounters,
+                                   List<ObsType> labObs, DemographicsType demographicsType);
 }

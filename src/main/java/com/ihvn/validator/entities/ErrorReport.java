@@ -1,11 +1,12 @@
 package com.ihvn.validator.entities;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.ihvn.validator.models.EncounterErrors;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,6 +18,10 @@ import java.util.UUID;
 @EqualsAndHashCode
 @Entity
 @Table(name = "error_report")
+@TypeDef(
+        name = "jsonb",
+        typeClass = JsonBinaryType.class
+)
 public class ErrorReport {
 
     @Id
@@ -26,9 +31,9 @@ public class ErrorReport {
     @Column(name = "patient_id")
     private UUID patientId;
 
-    @Type(type= "jsonb")
+    @Type(type = "jsonb")
     @Column(name = "error_message", columnDefinition = "jsonb")
-    private List<EncounterErrors> errorMessage;
+    private String errorMessage;
 
     @Column(name = "date_created")
     private LocalDateTime dateCreated;
